@@ -41,7 +41,7 @@ get_emu_path() {
         return
     fi
 
-    pak_emu="$SDCARD_PATH/Emus/${EMU_NAME}.pak/launch.sh"
+    pak_emu="$SDCARD_PATH/.system/$PLATFORM/paks/Emus/${EMU_NAME}.pak/launch.sh"
     if [ -f "$pak_emu" ]; then
         echo "$pak_emu"
         return
