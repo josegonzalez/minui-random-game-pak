@@ -8,14 +8,12 @@ trap "rm -f /tmp/stay_awake" EXIT INT TERM HUP QUIT
 
 find_random_file() {
     DIR="$1"
-    # Get all files except hidden ones and txt/log files, count them
     total=$(find "$DIR" -type f ! -path '*/\.*' ! -name '*.txt' ! -name '*.log' | wc -l)
 
     if [ "$total" -eq 0 ]; then
         return 1
     fi
 
-    # Generate random number between 1 and total using PID and time
     r="$((($(date +%s) + $$) % total + 1))"
 
     # Get the r-th file
@@ -26,14 +24,12 @@ get_emu_folder() {
     FILEPATH="$1"
     ROMS="$SDCARD_PATH/Roms"
 
-    # Get first folder name by cutting at first /
     echo "${FILEPATH#"$ROMS/"}" | cut -d'/' -f1
 }
 
 get_emu_name() {
     EMU_FOLDER="$1"
 
-    # Extract text between parentheses using basic sed
     echo "$EMU_FOLDER" | sed 's/.*(\([^)]*\)).*/\1/'
 }
 
