@@ -1,0 +1,5 @@
+{
+    "label": "Random Game",
+    "launch": "launch.sh",
+    "description": "Randomly selects a game from the ROMs folder and launches it"
+}
