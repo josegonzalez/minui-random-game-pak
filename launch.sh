@@ -1,9 +1,10 @@
 #!/bin/sh
-
-# TODO: write a daemon that binds this to Y?
-
-SYSTEM_PATH="$SDCARD_PATH/.system/$PLATFORM"
-PAKS_PATH="$SDCARD_PATH/.system/$PLATFORM/paks"
+echo "$0" "$@"
+progdir="$(dirname "$0")"
+cd "$progdir" || exit 1
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$progdir/lib"
+echo 1 >/tmp/stay_awake
+trap "rm -f /tmp/stay_awake" EXIT INT TERM HUP QUIT
 
 find_random_file() {
     DIR="$1"
@@ -53,24 +54,57 @@ get_emu_path() {
     return 1
 }
 
+show_message() {
+    message="$1"
+    seconds="$2"
+
+    if [ -z "$seconds" ]; then
+        seconds="forever"
+    fi
+
+    killall sdl2imgshow
+    echo "$message"
+    if [ "$seconds" = "forever" ]; then
+        "$progdir/bin/sdl2imgshow" \
+            -i "$progdir/res/background.png" \
+            -f "$progdir/res/fonts/BPreplayBold.otf" \
+            -s 27 \
+            -c "220,220,220" \
+            -q \
+            -t "$message" >/dev/null 2>&1 &
+    else
+        "$progdir/bin/sdl2imgshow" \
+            -i "$progdir/res/background.png" \
+            -f "$progdir/res/fonts/BPreplayBold.otf" \
+            -s 27 \
+            -c "220,220,220" \
+            -q \
+            -t "$message" >/dev/null 2>&1
+        sleep "$seconds"
+    fi
+}
+
 main() {
+    trap "killall sdl2imgshow" EXIT INT TERM HUP QUIT
+
     show_message "Finding a random game..."
     sleep 1
 
     FILE=$(find_random_file "$SDCARD_PATH/Roms")
     if [ -z "$FILE" ]; then
-        show_message "Could not find any games." forever
-        exit
+        show_message "Could not find any games." 2
+        exit 1
     fi
 
     EMU_FOLDER=$(get_emu_folder "$FILE")
     EMU_NAME=$(get_emu_name "$EMU_FOLDER")
     EMU_PATH=$(get_emu_path "$EMU_NAME")
     if [ -z "$EMU_PATH" ]; then
-        show_message "Could not find an emulator for this game." forever
-        exit
+        show_message "Could not find an emulator for this game." 2
+        exit 1
     fi
 
+    killall sdl2imgshow
     exec "$EMU_PATH" "$FILE"
 }
 
