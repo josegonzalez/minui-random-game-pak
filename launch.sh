@@ -20,6 +20,14 @@ find_random_file() {
     find "$DIR" -type f ! -path '*/\.*' ! -name '*.txt' ! -name '*.log' | head -n "$r" | tail -1
 }
 
+get_rom_name() {
+    FILEPATH="$1"
+    filename="$(basename "$FILEPATH")"
+    filename="${filename%.*}"
+    filename="$(echo "$filename" | sed 's/([^)]*)//g' | sed 's/\[[^]]*\]//g' | sed 's/[[:space:]]*$//')"
+    echo "$filename"
+}
+
 get_emu_folder() {
     FILEPATH="$1"
     ROMS="$SDCARD_PATH/Roms"
@@ -99,6 +107,9 @@ main() {
         show_message "Could not find an emulator for this game." 2
         exit 1
     fi
+
+    ROM_NAME=$(get_rom_name "$FILE")
+    show_message "$ROM_NAME" 2
 
     killall sdl2imgshow
     exec "$EMU_PATH" "$FILE"
