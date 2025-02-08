@@ -2,6 +2,8 @@
 echo "$0" "$@"
 progdir="$(dirname "$0")"
 cd "$progdir" || exit 1
+[ -f "$progdir/debug" ] && set -x
+PAK_NAME="$(basename "$progdir")"
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$progdir/lib"
 echo 1 >/tmp/stay_awake
 
@@ -138,9 +140,4 @@ main() {
     exec "$EMU_PATH" "$FILE"
 }
 
-mkdir -p "$progdir/log"
-if [ -f "$progdir/log/launch.log" ]; then
-    mv "$progdir/log/launch.log" "$progdir/log/launch.log.old"
-fi
-
-main "$@" >"$progdir/log/launch.log" 2>&1
+main "$@" >"$LOGS_PATH/$PAK_NAME.txt" 2>&1
