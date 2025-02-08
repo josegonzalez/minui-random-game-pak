@@ -22,14 +22,15 @@ find_random_file() {
 add_game_to_recents() {
     FILEPATH="$1" GAME_ALIAS="$2"
 
+    FILEPATH="${FILEPATH#"$SDCARD_PATH/"}"
     RECENTS="$SDCARD_PATH/.userdata/shared/.minui/recent.txt"
     if [ -f "$RECENTS" ]; then
-        sed -i "/$FILEPATH\t$GAME_ALIAS/d" "$RECENTS"
+        sed -i "#/$FILEPATH\t$GAME_ALIAS#d" "$RECENTS"
     fi
 
     rm -f "/tmp/recent.txt"
     touch "/tmp/recent.txt"
-    printf "%s\t%s\n" "$FILEPATH" "$GAME_ALIAS" >"/tmp/recent.txt"
+    printf "%s\t%s\n" "/$FILEPATH" "$GAME_ALIAS" >"/tmp/recent.txt"
     cat "$RECENTS" >>"/tmp/recent.txt"
     mv "/tmp/recent.txt" "$RECENTS"
 }
