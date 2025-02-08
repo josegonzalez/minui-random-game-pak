@@ -4,7 +4,6 @@ progdir="$(dirname "$0")"
 cd "$progdir" || exit 1
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$progdir/lib"
 echo 1 >/tmp/stay_awake
-trap "rm -f /tmp/stay_awake" EXIT INT TERM HUP QUIT
 
 find_random_file() {
     DIR="$1"
@@ -66,7 +65,7 @@ show_message() {
         seconds="forever"
     fi
 
-    killall sdl2imgshow
+    killall sdl2imgshow >/dev/null 2>&1 || true
     echo "$message"
     if [ "$seconds" = "forever" ]; then
         "$progdir/bin/sdl2imgshow" \
@@ -88,8 +87,13 @@ show_message() {
     fi
 }
 
+cleanup() {
+    rm -f /tmp/stay_awake
+    killall sdl2imgshow >/dev/null 2>&1 || true
+}
+
 main() {
-    trap "killall sdl2imgshow" EXIT INT TERM HUP QUIT
+    trap "cleanup" EXIT INT TERM HUP QUIT
 
     show_message "Finding a random game..."
     sleep 1
@@ -111,7 +115,8 @@ main() {
     ROM_NAME=$(get_rom_name "$FILE")
     show_message "$ROM_NAME" 2
 
-    killall sdl2imgshow
+    killall sdl2imgshow >/dev/null 2>&1 || true
+    rm -f /tmp/stay_awake
     exec "$EMU_PATH" "$FILE"
 }
 
