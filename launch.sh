@@ -19,6 +19,21 @@ find_random_file() {
     find "$DIR" -type f ! -path '*/\.*' ! -name '*.txt' ! -name '*.log' | head -n "$r" | tail -1
 }
 
+add_game_to_recents() {
+    FILEPATH="$1" GAME_ALIAS="$2"
+
+    RECENTS="$SDCARD_PATH/.userdata/shared/.minui/recent.txt"
+    if [ -f "$RECENTS" ]; then
+        sed -i "/$FILEPATH\t$GAME_ALIAS/d" "$RECENTS"
+    fi
+
+    rm -f "/tmp/recent.txt"
+    touch "/tmp/recent.txt"
+    printf "%s\t%s\n" "$FILEPATH" "$GAME_ALIAS" >"/tmp/recent.txt"
+    cat "$RECENTS" >>"/tmp/recent.txt"
+    mv "/tmp/recent.txt" "$RECENTS"
+}
+
 get_rom_name() {
     FILEPATH="$1"
     filename="$(basename "$FILEPATH")"
@@ -117,6 +132,8 @@ main() {
 
     killall sdl2imgshow >/dev/null 2>&1 || true
     rm -f /tmp/stay_awake
+
+    add_game_to_recents "$FILE" "$ROM_NAME"
     exec "$EMU_PATH" "$FILE"
 }
 
