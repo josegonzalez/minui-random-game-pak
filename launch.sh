@@ -119,7 +119,7 @@ main() {
     FILE=$(find_random_file "$SDCARD_PATH/Roms")
     if [ -z "$FILE" ]; then
         show_message "Could not find any games." 2
-        exit 1
+        return 1
     fi
 
     EMU_FOLDER=$(get_emu_folder "$FILE")
@@ -127,7 +127,7 @@ main() {
     EMU_PATH=$(get_emu_path "$EMU_NAME")
     if [ -z "$EMU_PATH" ]; then
         show_message "Could not find an emulator for this game." 2
-        exit 1
+        return 1
     fi
 
     ROM_NAME=$(get_rom_name "$FILE")
