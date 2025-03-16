@@ -1,23 +1,17 @@
-TAG ?= latest
-BUILD_DATE := "$(shell date -u +%FT%TZ)"
 PAK_NAME := $(shell jq -r .label config.json)
 
+PLATFORMS := tg5040 rg35xxplus
+MINUI_PRESENTER_VERSION := 0.3.1
+
 clean:
-	rm -f bin/sdl2imgshow || true
-	rm -f res/fonts/BPreplayBold.otf || true
+	rm -f bin/*/minui-presenter || true
 
-build: bin/sdl2imgshow res/fonts/BPreplayBold.otf
+build: $(foreach platform,$(PLATFORMS),bin/$(platform)/minui-presenter)
 
-bin/sdl2imgshow:
-	docker buildx build --platform linux/arm64 --load -f Dockerfile.sdl2imgshow --progress plain -t app/sdl2imgshow:$(TAG) .
-	docker container create --name extract app/sdl2imgshow:$(TAG)
-	docker container cp extract:/go/src/github.com/kloptops/sdl2imgshow/build/sdl2imgshow bin/sdl2imgshow
-	docker container rm extract
-	chmod +x bin/sdl2imgshow
-
-res/fonts/BPreplayBold.otf:
-	mkdir -p res/fonts
-	curl -sSL -o res/fonts/BPreplayBold.otf "https://raw.githubusercontent.com/shauninman/MinUI/refs/heads/main/skeleton/SYSTEM/res/BPreplayBold-unhinted.otf"
+bin/%/minui-presenter:
+	mkdir -p bin/$*
+	curl -f -o bin/$*/minui-presenter -sSL https://github.com/josegonzalez/minui-presenter/releases/download/$(MINUI_PRESENTER_VERSION)/minui-presenter-$*
+	chmod +x bin/$*/minui-presenter
 
 release: build
 	mkdir -p dist

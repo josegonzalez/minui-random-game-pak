@@ -1,11 +1,25 @@
 #!/bin/sh
+PAK_DIR="$(dirname "$0")"
+PAK_NAME="$(basename "$PAK_DIR")"
+PAK_NAME="${PAK_NAME%.*}"
+[ -f "$USERDATA_PATH/$PAK_NAME/debug" ] && set -x
+
+rm -f "$LOGS_PATH/$PAK_NAME.txt"
+exec >>"$LOGS_PATH/$PAK_NAME.txt"
+exec 2>&1
+
 echo "$0" "$@"
-progdir="$(dirname "$0")"
-cd "$progdir" || exit 1
-[ -f "$USERDATA_PATH/RandomGame/debug" ] && set -x
-PAK_NAME="$(basename "$progdir")"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$progdir/lib"
-echo 1 >/tmp/stay_awake
+cd "$PAK_DIR" || exit 1
+mkdir -p "$USERDATA_PATH/$PAK_NAME"
+
+architecture=arm
+if uname -m | grep -q '64'; then
+    architecture=arm64
+fi
+
+export HOME="$USERDATA_PATH/$PAK_NAME"
+export LD_LIBRARY_PATH="$PAK_DIR/lib:$LD_LIBRARY_PATH"
+export PATH="$PAK_DIR/bin/$architecture:$PAK_DIR/bin/$PLATFORM:$PAK_DIR/bin:$PATH"
 
 find_random_file() {
     DIR="$1"
@@ -37,7 +51,7 @@ add_game_to_recents() {
     mv "/tmp/recent.txt" "$RECENTS"
 }
 
-get_rom_name() {
+get_rom_alias() {
     FILEPATH="$1"
     filename="$(basename "$FILEPATH")"
     filename="${filename%.*}"
@@ -83,35 +97,28 @@ show_message() {
         seconds="forever"
     fi
 
-    killall sdl2imgshow >/dev/null 2>&1 || true
-    echo "$message"
+    killall minui-presenter >/dev/null 2>&1 || true
+    echo "$message" 1>&2
     if [ "$seconds" = "forever" ]; then
-        "$progdir/bin/sdl2imgshow" \
-            -i "$progdir/res/background.png" \
-            -f "$progdir/res/fonts/BPreplayBold.otf" \
-            -s 27 \
-            -c "220,220,220" \
-            -q \
-            -t "$message" >/dev/null 2>&1 &
+        minui-presenter --message "$message" --timeout -1 &
     else
-        "$progdir/bin/sdl2imgshow" \
-            -i "$progdir/res/background.png" \
-            -f "$progdir/res/fonts/BPreplayBold.otf" \
-            -s 27 \
-            -c "220,220,220" \
-            -q \
-            -t "$message" >/dev/null 2>&1
-        sleep "$seconds"
+        minui-presenter --message "$message" --timeout "$seconds"
     fi
 }
 
 cleanup() {
     rm -f /tmp/stay_awake
-    killall sdl2imgshow >/dev/null 2>&1 || true
+    killall minui-presenter >/dev/null 2>&1 || true
 }
 
 main() {
+    echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
+
+    if ! command -v minui-presenter >/dev/null 2>&1; then
+        show_message "minui-presenter not found" 2
+        return 1
+    fi
 
     show_message "Finding a random game..."
     sleep 1
@@ -130,14 +137,14 @@ main() {
         return 1
     fi
 
-    ROM_NAME=$(get_rom_name "$FILE")
-    show_message "$ROM_NAME" 2
+    ROM_ALIAS=$(get_rom_alias "$FILE")
+    show_message "$ROM_ALIAS"
 
-    killall sdl2imgshow >/dev/null 2>&1 || true
     rm -f /tmp/stay_awake
 
-    add_game_to_recents "$FILE" "$ROM_NAME"
+    add_game_to_recents "$FILE" "$ROM_ALIAS"
+    killall minui-presenter >/dev/null 2>&1 || true
     exec "$EMU_PATH" "$FILE"
 }
 
-main "$@" >"$LOGS_PATH/$PAK_NAME.txt" 2>&1
+main "$@"
