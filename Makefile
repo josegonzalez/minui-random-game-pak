@@ -9,6 +9,7 @@ clean:
 build: $(foreach platform,$(PLATFORMS),bin/$(platform)/minui-presenter)
 
 bin/%/minui-presenter:
+	mkdir -p bin/$*
 	curl -f -o bin/$*/minui-presenter -sSL https://github.com/josegonzalez/minui-presenter/releases/download/$(MINUI_PRESENTER_VERSION)/minui-presenter-$*
 	chmod +x bin/$*/minui-presenter
 
