@@ -1,5 +1,9 @@
 {
     "label": "Random Game",
     "launch": "launch.sh",
-    "description": "Randomly selects a game from the ROMs folder and launches it"
+    "description": "Randomly selects a game from the ROMs folder and launches it",
+    "platforms": [
+        "rg35xxplus",
+        "tg5040"
+    ]
 }
