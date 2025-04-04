@@ -1,7 +1,7 @@
 PAK_NAME := $(shell jq -r .label config.json)
 
 PLATFORMS := tg5040 rg35xxplus
-MINUI_PRESENTER_VERSION := 0.4.0
+MINUI_PRESENTER_VERSION := 0.7.0
 
 clean:
 	rm -f bin/*/minui-presenter || true
