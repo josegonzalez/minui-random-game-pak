@@ -3,7 +3,7 @@
   "type": "TOOL",
   "description": "Randomly selects a game from the ROMs folder and launches it",
   "author": "josegonzalez",
-  "repo_url": "https://github.com/josegonzalez/minui-random-game",
+  "repo_url": "https://github.com/josegonzalez/minui-random-game-pak",
   "release_filename": "Random.Game.pak.zip",
   "platforms": [
     "rg35xxplus",
