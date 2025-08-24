@@ -115,6 +115,17 @@ main() {
     echo "1" >/tmp/stay_awake
     trap "cleanup" EXIT INT TERM HUP QUIT
 
+    if [ "$PLATFORM" = "tg3040" ] && [ -z "$DEVICE" ]; then
+        export DEVICE="brick"
+        export PLATFORM="tg5040"
+    fi
+
+    allowed_platforms="miyoomini my282 my355 tg5040 rg35xxplus"
+    if ! echo "$allowed_platforms" | grep -q "$PLATFORM"; then
+        show_message "$PLATFORM is not a supported platform" 2
+        return 1
+    fi
+
     if ! command -v minui-presenter >/dev/null 2>&1; then
         show_message "minui-presenter not found" 2
         return 1
