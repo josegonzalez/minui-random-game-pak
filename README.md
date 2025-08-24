@@ -6,6 +6,9 @@ A MinUI app that starts a random game from the ROMs folder.
 
 This pak is designed and tested on the following MinUI Platforms and devices:
 
+- `miyoomini`: Miyoo Mini and Miyoo Mini Plus
+- `my282`: Miyoo A30
+- `my355`: Miyoo Flip
 - `tg5040`: Trimui Brick (formerly `tg3040`), Trimui Smart Pro
 - `rg35xxplus`: RG-35XX Plus, RG-34XX, RG-35XX H, RG-35XX SP
 

@@ -5,7 +5,7 @@ PAK_FOLDER := $(shell echo $(PAK_TYPE) | cut -c1)$(shell echo $(PAK_TYPE) | tr '
 PUSH_SDCARD_PATH ?= /mnt/SDCARD
 PUSH_PLATFORM ?= tg5040
 
-PLATFORMS := tg5040 rg35xxplus
+PLATFORMS := miyoomini my282 my355 tg5040 rg35xxplus
 MINUI_PRESENTER_VERSION := 0.7.0
 
 clean:
