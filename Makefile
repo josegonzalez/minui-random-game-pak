@@ -6,7 +6,7 @@ PUSH_SDCARD_PATH ?= /mnt/SDCARD
 PUSH_PLATFORM ?= tg5040
 
 PLATFORMS := miyoomini my282 my355 tg5040 rg35xxplus
-MINUI_PRESENTER_VERSION := 0.7.0
+MINUI_PRESENTER_VERSION := 0.10.0
 
 clean:
 	rm -f bin/*/minui-presenter || true
