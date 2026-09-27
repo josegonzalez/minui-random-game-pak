@@ -5,13 +5,23 @@ PAK_FOLDER := $(shell echo $(PAK_TYPE) | cut -c1)$(shell echo $(PAK_TYPE) | tr '
 PUSH_SDCARD_PATH ?= /mnt/SDCARD
 PUSH_PLATFORM ?= tg5040
 
-PLATFORMS := miyoomini my282 my355 rg35xxplus tg5040 tg5050
-MINUI_PRESENTER_VERSION := 0.12.0
+PLATFORMS := h700 miyoomini my282 my355 rg35xxplus tg5040 tg5050
+MINUI_PRESENTER_VERSION := 0.13.4
 
 clean:
 	rm -f bin/*/minui-presenter || true
 
 build: $(foreach platform,$(PLATFORMS),bin/$(platform)/minui-presenter)
+
+bin/h700/minui-presenter:
+	mkdir -p bin/h700
+	curl -f -o bin/h700/minui-presenter -sSL https://github.com/josegonzalez/minui-presenter/releases/download/$(MINUI_PRESENTER_VERSION)/minui-presenter-h700-nextui
+	chmod +x bin/h700/minui-presenter
+
+bin/tg5050/minui-presenter:
+	mkdir -p bin/tg5050
+	curl -f -o bin/tg5050/minui-presenter -sSL https://github.com/josegonzalez/minui-presenter/releases/download/$(MINUI_PRESENTER_VERSION)/minui-presenter-tg5050-nextui
+	chmod +x bin/tg5050/minui-presenter
 
 bin/%/minui-presenter:
 	mkdir -p bin/$*
