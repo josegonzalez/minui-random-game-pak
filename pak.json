@@ -6,6 +6,7 @@
   "repo_url": "https://github.com/josegonzalez/minui-random-game-pak",
   "release_filename": "Random.Game.pak.zip",
   "platforms": [
+    "h700",
     "miyoomini",
     "my282",
     "my355",

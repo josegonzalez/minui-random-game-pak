@@ -6,6 +6,7 @@ A MinUI app that starts a random game from the ROMs folder.
 
 This pak is designed and tested on the following MinUI Platforms and devices:
 
+- `h700`: Anbernic RG28XX, RG34XX, RG34XX SP, RG35XX Plus, RG35XX 2024, RG35XX H, RG35XX Pro, RG35XX SP, RG40XX H, RG40XX V, RG CubeXX and RG SP, running NextUI on BaseOS
 - `miyoomini`: Miyoo Mini and Miyoo Mini Plus
 - `my282`: Miyoo A30
 - `my355`: Miyoo Flip
